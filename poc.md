@@ -1,58 +1,67 @@
+
+# Warehouse Digital Twin Architecture
+
+```mermaid
 flowchart TB
-     subgraph EDGE["EDGE TIER — one GPU box per facility (near cameras)"]
-         CAM["CCTV cameras<br/>(RTSP)"]
-         FF["FFmpeg decode<br/>tiered 1–5 fps"]
-         YOLO["YOLO detect<br/>(TensorRT)"]
-         BT["ByteTrack<br/>single-camera tracking"]
-         EM["Edge emitter<br/>produces TRACK EVENTS"]
-         CAM --> FF --> YOLO --> BT --> EM
-     end
+    subgraph EDGE["EDGE TIER — One GPU Box Per Facility (Near Cameras)"]
+        CAM["CCTV Cameras<br/>(RTSP)"]
+        FF["FFmpeg Decode<br/>Tiered 1–5 FPS"]
+        YOLO["YOLO Detection<br/>(TensorRT)"]
+        BT["ByteTrack<br/>Single-Camera Tracking"]
+        EM["Edge Emitter<br/>Produces Track Events"]
 
+        CAM --> FF --> YOLO --> BT --> EM
+    end
 
-     subgraph SERVER["SERVER TIER — VM / on-prem (no GPU)"]
-         ING["(1) Ingest<br/>validate"]
-         LOG[("(2) RAW EVENT LOG<br/>append-only · source of truth<br/>TimescaleDB hypertable")]
-         DER["(3) Deriver — LIVE<br/>zone geometry + rules"]
-         REP["(3') Replayer — BATCH<br/>same logic over history"]
-         CFG[/"(5) Zone/Rule CONFIG<br/>versioned JSON"/]
+    subgraph SERVER["SERVER TIER — VM / On-Prem (No GPU)"]
+        ING["(1) Ingest API<br/>Validate Events"]
 
+        LOG["(2) RAW EVENT LOG<br/>Append-Only Source of Truth<br/>TimescaleDB Hypertable"]
 
-         subgraph DERIVED["(4) DERIVED STORES"]
-             MET[("Metrics<br/>occupancy · dwell · flow")]
-             STATE[("Twin State<br/>current snapshot")]
-             ALERTS[("Alerts<br/>rule crossings")]
-         end
+        DER["(3) Deriver (LIVE)<br/>Zone Geometry + Rules"]
 
+        REP["(3') Replayer (BATCH)<br/>Same Logic Over Historical Events"]
 
-         API["(6) FastAPI<br/>REST + WebSocket"]
-         UI["(7) Next.js dashboard<br/>layout · counts · heatmaps<br/>alerts · playback · cam health"]
-         CLIPS[("Clip store<br/>local disk + retention cron")]
+        CFG["(5) Zone / Rule Configuration<br/>Versioned JSON"]
 
+        subgraph DERIVED["(4) Derived Stores"]
+            MET["Metrics<br/>Occupancy · Dwell · Flow"]
+            STATE["Twin State<br/>Current Snapshot"]
+            ALERTS["Alerts<br/>Rule Crossings"]
+        end
 
-         ING --> LOG
-         LOG --> DER
-         LOG --> REP
-         CFG --> DER
-         CFG --> REP
-         DER --> MET
-         DER --> STATE
-         DER --> ALERTS
-         REP --> MET
-         REP --> STATE
-         REP --> ALERTS
-         DERIVED --> API
-         API --> UI
-         CLIPS --> API
-     end
+        API["(6) FastAPI<br/>REST + WebSocket"]
 
+        UI["(7) Next.js Dashboard<br/>Layout · Counts · Heatmaps<br/>Alerts · Playback · Camera Health"]
 
-     EM -->|"events only<br/>(raw video stays in building)"| ING
-     EM -.->|"trigger clips"| CLIPS
+        CLIPS["Clip Store<br/>Local Disk + Retention Cron"]
 
+        ING --> LOG
 
-     classDef truth fill:#fde68a,stroke:#b45309,stroke-width:2px,color:#000;
-     classDef store fill:#dbeafe,stroke:#1e40af,color:#000;
-     classDef config fill:#dcfce7,stroke:#15803d,color:#000;
-     class LOG truth;
-     class MET,STATE,ALERTS,CLIPS store;
-     class CFG config;
+        LOG --> DER
+        LOG --> REP
+
+        CFG --> DER
+        CFG --> REP
+
+        DER --> MET
+        DER --> STATE
+        DER --> ALERTS
+
+        REP --> MET
+        REP --> STATE
+        REP --> ALERTS
+
+        MET --> API
+        STATE --> API
+        ALERTS --> API
+
+        CLIPS --> API
+
+        API --> UI
+    end
+
+    EM -->|"Track Events Only<br/>Raw Video Never Leaves Facility"| ING
+
+    EM -.->|"Alert Triggered Clips"| CLIPS
+```
