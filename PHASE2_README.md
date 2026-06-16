@@ -1,6 +1,5 @@
 # Warehouse Digital Twin — Phase 2 Architecture (Multi-Camera, WMS-Integrated)
 
-<<<<<<< HEAD
 =======
 
 >>>>>>> 624430126cb5a064d4b4958cb55413a4f6121ee1
