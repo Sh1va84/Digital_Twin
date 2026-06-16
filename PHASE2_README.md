@@ -1,6 +1,6 @@
 # Warehouse Digital Twin — Phase 2 Architecture (Multi-Camera, WMS-Integrated)
 
-**Author role:** Senior DevOps / AI / Computer-Vision Engineer
+
 **Scope:** Phase 2 = "Warehouse-Wide Operational Intelligence." Many cameras (50+), multiple edge boxes, one warehouse fully covered, **integrated with the WMS/WCS**.
 **Builds on:** [PHASE1_ARCHITECTURE.md](PHASE1_ARCHITECTURE.md). Phase 1 proved one camera → trustworthy live map. Phase 2 makes it **whole-building** and **business-aware**.
 
