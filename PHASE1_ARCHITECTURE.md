@@ -1,6 +1,6 @@
 # Warehouse Digital Twin — Phase 1 Architecture (Production V1)
 
-**Author role:** Senior DevOps / AI / Computer-Vision Engineer
+
 **Scope:** Phase 1 = "Operational Visibility" POC. One edge GPU box per facility, 1–8 cameras, single warehouse.
 **Goal of V1:** Prove the core pipeline end-to-end on *real warehouse CCTV* and produce a live, trustworthy operational map + dashboard. Everything here is buildable in ~8–10 weeks.
 
